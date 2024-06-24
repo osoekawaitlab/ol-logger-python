@@ -29,7 +29,7 @@ def get_logger(settings: LoggerSettings) -> Logger:
     :return: Logger
 
     """
-    logger = getLogger(__name__)
+    logger = getLogger(str(settings.name))
     logger.setLevel(level=settings.level)
     formatter = _create_formatter(verbose=settings.verbose)
 

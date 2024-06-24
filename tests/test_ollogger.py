@@ -15,6 +15,7 @@ def test_logging_default_settings(capsys: CaptureFixture[str]) -> None:
     assert len(logger.handlers) == 1
     assert isinstance(logger.handlers[0], logging.StreamHandler)
     assert logger.handlers[0].level == logging.INFO
+    assert logger.name == "ollogger"
     dt = datetime(2021, 1, 1, 12, 0, 0, 587166, tzinfo=timezone.utc)
     with freeze_time(dt):
         logger.info("Hello")
@@ -35,7 +36,14 @@ def test_logging_default_settings(capsys: CaptureFixture[str]) -> None:
 
 def test_logging_custom_settings(capsys: CaptureFixture[str]) -> None:
     with NamedTemporaryFile(mode="w+") as file:
-        logger = ollogger.get_logger(ollogger.LoggerSettings(level=logging.WARNING, file_path=file.name, verbose=True))
+        logger = ollogger.get_logger(
+            ollogger.LoggerSettings(name="customname", level=logging.WARNING, file_path=file.name, verbose=True)
+        )
+        assert logger.level == logging.WARNING
+        assert len(logger.handlers) == 2
+        assert isinstance(logger.handlers[0], logging.StreamHandler)
+        assert logger.handlers[0].level == logging.WARNING
+        assert logger.name == "customname"
         dt = datetime(2021, 1, 1, 12, 0, 0, 587166, tzinfo=timezone.utc)
         with freeze_time(dt):
             logger.info("Hello")
