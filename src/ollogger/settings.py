@@ -42,9 +42,9 @@ class LoggerSettings(BaseSettings):
         Verbose flag
 
     >>> LoggerSettings()
-    LoggerSettings(name=LoggerName('ollogger'), level=20, file_path=None, verbose=False)
+    LoggerSettings(config_path=None, name=LoggerName('ollogger'), level=20, file_path=None, verbose=False)
     >>> LoggerSettings(name="custom", level=10, file_path="logs.log", verbose=True)
-    LoggerSettings(name=LoggerName('custom'), level=10, file_path=PosixPath('logs.log'), verbose=True)
+    LoggerSettings(config_path=None, name=LoggerName('custom'), level=10, file_path=PosixPath('logs.log'), verbose=True)
     """  # noqa: E501
 
     name: LoggerName = Field(default=LoggerName.from_str("ollogger"))
