@@ -1,11 +1,27 @@
 from logging import FileHandler, Formatter, Logger, StreamHandler, getLogger
 from pathlib import Path
+from typing import Any
 
-from json_log_formatter import JSONFormatter, VerboseJSONFormatter
+from json_log_formatter import JSONFormatter, VerboseJSONFormatter, _json_serializable
 
 from .settings import LoggerSettings
 
 LoggerLevelT = int
+
+
+class AsciiJSONFormatter(JSONFormatter):
+    def to_json(self, record: Any) -> str:
+        try:
+            return self.json_lib.dumps(record, default=_json_serializable, ensure_ascii=False)
+        except (TypeError, ValueError, OverflowError):
+            try:
+                return self.json_lib.dumps(record, ensure_ascii=False)
+            except (TypeError, ValueError, OverflowError):
+                return "{}"
+
+
+class VerboseAsciiJSONFormatter(VerboseJSONFormatter, AsciiJSONFormatter):
+    pass
 
 
 def _create_formatter(verbose: bool) -> Formatter:
@@ -17,8 +33,8 @@ def _create_formatter(verbose: bool) -> Formatter:
 
     """
     if verbose:
-        return VerboseJSONFormatter()
-    return JSONFormatter()
+        return VerboseAsciiJSONFormatter()
+    return AsciiJSONFormatter()
 
 
 def get_logger(settings: LoggerSettings) -> Logger:

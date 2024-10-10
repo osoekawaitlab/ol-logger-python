@@ -14,6 +14,7 @@ def test_logging_default_settings(capsys: CaptureFixture[str]) -> None:
     assert logger.level == logging.INFO
     assert len(logger.handlers) == 1
     assert isinstance(logger.handlers[0], logging.StreamHandler)
+    assert isinstance(logger.handlers[0].formatter, ollogger.core.AsciiJSONFormatter)
     assert logger.handlers[0].level == logging.INFO
     assert logger.name == "ollogger"
     dt = datetime(2021, 1, 1, 12, 0, 0, 587166, tzinfo=timezone.utc)
@@ -26,12 +27,12 @@ def test_logging_default_settings(capsys: CaptureFixture[str]) -> None:
     assert capsys.readouterr().err == ""
     dt += timedelta(seconds=1)
     with freeze_time(dt):
-        logger.warning("World")
-    assert capsys.readouterr().err == '{"message": "World", "time": "2021-01-01T12:00:02.587166+00:00"}\n'
+        logger.warning("こんにちは")
+    assert capsys.readouterr().err == '{"message": "こんにちは", "time": "2021-01-01T12:00:02.587166+00:00"}\n'
     dt += timedelta(seconds=1)
     with freeze_time(dt):
-        logger.error("World")
-    assert capsys.readouterr().err == '{"message": "World", "time": "2021-01-01T12:00:03.587166+00:00"}\n'
+        logger.error("世界")
+    assert capsys.readouterr().err == '{"message": "世界", "time": "2021-01-01T12:00:03.587166+00:00"}\n'
 
 
 def test_logging_custom_settings(capsys: CaptureFixture[str]) -> None:
@@ -54,9 +55,9 @@ def test_logging_custom_settings(capsys: CaptureFixture[str]) -> None:
         assert capsys.readouterr().err == ""
         dt += timedelta(seconds=1)
         with freeze_time(dt):
-            logger.warning("Hello")
+            logger.warning("こんにちは")
         res0 = json.loads(capsys.readouterr().err)
-        assert res0["message"] == "Hello"
+        assert res0["message"] == "こんにちは"
         assert res0["time"] == "2021-01-01T12:00:02.587166+00:00"
         for k in (
             "filename",
